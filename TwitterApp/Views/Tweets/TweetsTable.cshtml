@@ -1,0 +1,61 @@
+﻿@using TwitterApp.Models
+
+@{ 
+    var data = Session["TwitterTableData"] as TwitterApp.Models.TwitterTableViewModel;
+}
+<div id="updarea">
+    <table class="table">
+        <tr>
+            <th>
+            </th>
+            <th>
+                Post Date
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var tweet in data.Tweets)
+        {
+            <tr>
+                <td>
+                    <img src="@data.User.ImageUrl" alt="@data.User.FullName" />
+                </td>
+                <td>
+                    @Html.DisplayFor(t => tweet.Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(t => tweet.Text)
+                </td>
+                <td>
+                    @Ajax.ActionLink("Delete", "Delete", "Tweets",
+               new { id = tweet.Id },
+               new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "updarea" },
+               new { @class = "btn btn-default" })
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="btn-group">
+        @for (int i = 1; i <= data.PagesCount; i++)
+        {
+            if (i == data.CurrentPage)
+            {
+                @Ajax.ActionLink(i.ToString(), "Index", "Tweets",
+               new { username = data.User.UserName, page = i, search = data.Search },
+               new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "updarea" },
+               new { @class = "btn btn-primary" });
+            }
+            else
+            {
+                @Ajax.ActionLink(i.ToString(), "Index", "Tweets",
+               new { username = data.User.UserName, page = i, search = data.Search },
+               new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "updarea" },
+               new { @class = "btn btn-default" });
+            }
+        }
+    </div>
+</div>
+

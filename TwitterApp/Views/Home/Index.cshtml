@@ -1,0 +1,53 @@
+﻿@model List<TwitterApp.Models.User>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h2>Twitter App</h2>
+    <p class="lead">This application allows to read tweets of any Twitter user</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <h2>Available tweets</h2>
+        <p>
+            Select user from the list:
+        </p>
+        @if (Model.Count > 0)
+        {
+            <table class="table table-hover table-striped">
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td><img src="@user.ImageUrl" alt="@user.FullName" /></td>
+                        <td class="text-left h3">
+                            @Html.ActionLink(user.FullName, "Index", "Tweets", new { username = user.UserName }, null)
+                        </td>
+
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <p>
+                There are no users
+            </p>
+        }
+
+        <p>
+            Or add users:
+        </p>
+        @using (Html.BeginForm("Add", "Users", FormMethod.Post))
+        {
+            <div class="input-group">
+                <input type="text" class="form-control" name="username" placeholder="User Name" />
+                <div class="input-group-btn">
+                    <input type="submit" value="Add User" class="btn btn-default" />
+                </div>
+            </div>
+            
+        }
+    </div>
+</div>

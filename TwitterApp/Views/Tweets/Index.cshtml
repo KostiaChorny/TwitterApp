@@ -1,0 +1,39 @@
+﻿@{
+    var data = Session["TwitterTableData"] as TwitterApp.Models.TwitterTableViewModel;
+    ViewBag.Title = data.User.FullName + " - Tweets";
+}
+
+<h2>@data.User.FullName</h2>
+@using (Ajax.BeginForm("Index", "Tweets", new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tweetscontainer", LoadingElementId = "loading" }))
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    @Ajax.ActionLink("Pull Tweets", "Pull", "Tweets",
+               new { username = data.User.UserName },
+               new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tweetscontainer", LoadingElementId = "loading" },
+               new { @class = "btn btn-default" })
+                    @Html.ActionLink("Back", "Index", "Home", null, new { @class = "btn btn-default" })
+                </span>
+                <input type="text" class="form-control" name="search" placeholder="Search for...">
+                <span class="input-group-btn">
+                    <input class="btn btn-default" type="submit" value="Go!" />
+                </span>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <img id="loading" class="btn img-responsive" src="~/Content/Img/loading_spinner.gif" style="display:none; height:34px;" />
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12" id="tweetscontainer">
+        @Html.Partial("TweetsTable")
+    </div>
+</div>
+
+
+@Scripts.Render("~/scripts/jquery-1.10.2.min.js")
+@Scripts.Render("~/scripts/jquery.unobtrusive-ajax.min.js")
