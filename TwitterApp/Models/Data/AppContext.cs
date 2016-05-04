@@ -14,6 +14,7 @@ namespace TwitterApp.Models.Data
         // connection string in the application configuration file.
         public AppContext()
             : base("name=AppContext")
+            //: base("server=eu-cdbr-azure-west-d.cloudapp.net;user id=b71dda2a6c908b;password=54fccd18586a68d;persistsecurityinfo=True;database=twitterAmB34pKED")
         {
         }
 
