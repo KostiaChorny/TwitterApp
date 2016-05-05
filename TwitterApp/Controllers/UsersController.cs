@@ -11,6 +11,7 @@ namespace TwitterApp.Controllers
 {
     public class UsersController : Controller
     {
+        AppContext db = new AppContext();
         // POST: AddUser
         [HttpPost]
         public ActionResult Add(string username)
@@ -24,13 +25,13 @@ namespace TwitterApp.Controllers
             var downloader = new TweetDownloader(token.Token);
             var user = downloader.GetUser(username);
 
-            var context = new AppContext();
-            var dbuser = context.Users.SingleOrDefault(u => u.UserId == user.UserId);
+            
+            var dbuser = db.Users.SingleOrDefault(u => u.UserId == user.UserId);
             if (dbuser == null)
             {
                 dbuser = user;
-                context.Users.Add(user);
-                context.SaveChanges();
+                db.Users.Add(user);
+                db.SaveChanges();
             }
 
             return RedirectToAction("Index", "Tweets", new { username = dbuser.UserName });
