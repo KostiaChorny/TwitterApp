@@ -187,6 +187,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Data\AppContext.cs" />
+    <Compile Include="Models\Data\TweetsHelper.cs" />
     <Compile Include="Models\Tweet.cs" />
     <Compile Include="Models\TwitterHelpers\TweetDownloader.cs" />
     <Compile Include="Models\TwitterHelpers\TwitterAuthToken.cs" />

@@ -24,11 +24,8 @@ namespace TwitterApp.Controllers
             if (username == String.Empty) throw new ArgumentException("Username is empty", "username");
 
             var user = db.Users.SingleOrDefault(u => u.UserName == username);
-            List<Tweet> tweets = user.Tweets.Where(t => !t.Deleted).ToList();
-            if (!string.IsNullOrEmpty(search))
-            {
-                tweets = tweets.Where(t => t.Text.Contains(search)).ToList();
-            }
+
+            List<Tweet> tweets = TweetsHelper.GetTweets(page, user.UserId, search);
 
             if (user != null)
             {
@@ -36,8 +33,8 @@ namespace TwitterApp.Controllers
                 {
                     User = user,
                     CurrentPage = page,
-                    Tweets = GetTweetsForPage(tweets, page),
-                    PagesCount = GetPagesCount(tweets),
+                    Tweets = tweets,
+                    PagesCount = TweetsHelper.GetPagesCount(page, user.UserId, search),
                     Search = search
                 };
                 return View();
@@ -58,7 +55,7 @@ namespace TwitterApp.Controllers
                 data.Search = search;
             }
             var user = db.Users.SingleOrDefault(u => u.UserName == data.User.UserName);
-            List<Tweet> tweets = user.Tweets.Where(t => !t.Deleted).ToList();
+            List<Tweet> tweets = TweetsHelper.GetTweets(page, user.UserId, search);
             if (!string.IsNullOrEmpty(data.Search))
             {
                 tweets = tweets.Where(t => t.Text.Contains(data.Search)).ToList();
@@ -66,8 +63,8 @@ namespace TwitterApp.Controllers
             if (user != null)
             {
                 data.CurrentPage = page;
-                data.Tweets = GetTweetsForPage(tweets, page);
-                data.PagesCount = GetPagesCount(tweets);
+                data.Tweets = tweets;
+                data.PagesCount = TweetsHelper.GetPagesCount(page, user.UserId, search);
                 return PartialView("TweetsTable");
             }
             else
@@ -98,13 +95,13 @@ namespace TwitterApp.Controllers
             }
             db.SaveChanges();
             var user = db.Users.SingleOrDefault(u => u.UserName == username);
-            tweets = user.Tweets.Where(t => !t.Deleted).ToList();
+            tweets = TweetsHelper.GetTweets(1, user.UserId, "");
             Session["TwitterTableData"] = new TwitterTableViewModel
             {
                 User = user,
                 CurrentPage = 1,
-                Tweets = GetTweetsForPage(tweets, 1),
-                PagesCount = GetPagesCount(tweets),
+                Tweets = tweets,
+                PagesCount = TweetsHelper.GetPagesCount(1, user.UserId, ""),
                 Search = null
             };
             return PartialView("TweetsTable");
@@ -137,22 +134,8 @@ namespace TwitterApp.Controllers
             base.Dispose(disposing);
         }
 
-        int GetPagesCount(List<Tweet> tweets)
-        {
-            var count = (tweets.Count() / 10);
-            if (tweets.Count() % 10 != 0) count++;
-            return count;
-        }
 
-        List<Tweet> GetTweetsForPage(List<Tweet> tweets, int page)
-        {
-            var tweetsPerPage = 10;
-            return tweets
-                .OrderByDescending(t => t.Created)
-                .Skip((page - 1) * tweetsPerPage)
-                .Take(tweetsPerPage)
-                .ToList();
-        }
+
 
     }
 }
